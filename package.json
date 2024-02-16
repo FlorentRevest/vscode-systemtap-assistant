@@ -1,0 +1,120 @@
+{
+  "name": "systemtap-assistant",
+  "displayName": "Systemtap assistant",
+  "description": "Systemtap script generation and logs rendering helper",
+  "publisher": "florent-revest",
+  "license": "MIT",
+  "icon": "icon.png",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlorentRevest/vscode-systemtap-assistant.git"
+  },
+  "engines": {
+    "vscode": "^1.59.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/src/extension.js",
+  "contributes": {
+    "submenus": [
+      {
+        "id": "systemtap-assistant.trace-menu",
+        "label": "Systemtap assistant"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "systemtap-assistant.trace-function",
+          "when": "editorLangId == c",
+          "group": "z_tracing"
+        },
+        {
+          "command": "systemtap-assistant.trace-line",
+          "when": "editorLangId == c",
+          "group": "z_tracing"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "systemtap-assistant.trace-function",
+        "title": "Trace this function's entries and exits"
+      },
+      {
+        "command": "systemtap-assistant.trace-line",
+        "title": "Trace this line number (doesn't track moves)"
+      }
+    ],
+    "configuration": {
+      "title": "Systemtap assistant",
+      "properties": {
+        "systemtap-assistant.port": {
+          "type": "number",
+          "default": 65530,
+          "description": "UDP port number to exchange trace logs on"
+        },
+        "systemtap-assistant.output": {
+          "type": "string",
+          "default": "tracer.stp",
+          "description": "Path to a systemtap script to write to (relative to the workspace)"
+        },
+        "systemtap-assistant.deploy-task": {
+          "type": "string",
+          "default": "",
+          "description": "Name of a task to run after the systemtap script is regenerated. Can be empty"
+        },
+        "systemtap-assistant.preamble-path": {
+          "type": "string",
+          "default": "",
+          "description": "Path to a preamble template. This will be used instead of the default preamble when generating new systemtap scripts. The @@PORT@@ and @@CLEAR_MSG@@ can be used in the preamble and will be replaced by the target port and the special clear message. If this settings is left empty, the default preamble will be used that uses netpoll UDP logging APIs."
+        },
+        "systemtap-assistant.call-code": {
+          "type": "string",
+          "default": "trace_call()",
+          "description": "Code to use in generated call probes."
+        },
+        "systemtap-assistant.return-code": {
+          "type": "string",
+          "default": "trace_return()",
+          "description": "Code to use in generated return probes."
+        },
+        "systemtap-assistant.line-code": {
+          "type": "string",
+          "default": "trace_line()",
+          "description": "Code to use in igenerated line probes."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "npm-run-all compile:*",
+    "compile:extension": "tsc -p ./",
+    "watch": "npm-run-all -p watch:*",
+    "watch:extension": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/node": "^12.11.7",
+    "@types/uuid": "^8.3.1",
+    "@types/vscode": "^1.59.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.19.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^4.8.2",
+    "vscode-test": "^1.5.0"
+  },
+  "dependencies": {
+    "dgram": "^1.0.1"
+  }
+}
